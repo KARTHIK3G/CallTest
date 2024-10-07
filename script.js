@@ -1,77 +1,69 @@
 let localPeerConnection;
-let localStream;
+let remoteStream = new MediaStream();
+
+// Get audio input from the user
+async function getAudioStream() {
+    try {
+        return await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+        alert('Error accessing audio device: ' + error);
+    }
+}
 
 // Create an offer
 document.getElementById('createOffer').addEventListener('click', async () => {
-  localPeerConnection = new RTCPeerConnection();
+    localPeerConnection = new RTCPeerConnection();
 
-  // Get audio stream
-  localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  localPeerConnection.addStream(localStream);
+    // Add event listener for ICE candidates
+    localPeerConnection.onicecandidate = event => {
+        if (event.candidate) {
+            document.getElementById('localCandidate').value = JSON.stringify(event.candidate);
+        }
+    };
 
-  localPeerConnection.onicecandidate = event => {
-    if (event.candidate) {
-      document.getElementById('localCandidate').value = JSON.stringify(event.candidate);
-    }
-  };
+    // Handle incoming stream
+    localPeerConnection.ontrack = event => {
+        remoteStream.addTrack(event.track);
+        document.getElementById('remoteAudio').srcObject = remoteStream;
+    };
 
-  localPeerConnection.onaddstream = event => {
-    document.getElementById('remoteAudio').srcObject = event.stream;
-  };
+    const localStream = await getAudioStream();
+    localStream.getTracks().forEach(track => localPeerConnection.addTrack(track, localStream));
 
-  const offer = await localPeerConnection.createOffer();
-  await localPeerConnection.setLocalDescription(offer);
+    const offer = await localPeerConnection.createOffer();
+    await localPeerConnection.setLocalDescription(offer);
 
-  document.getElementById('localDescription').value = JSON.stringify(localPeerConnection.localDescription);
+    document.getElementById('localOffer').value = JSON.stringify(localPeerConnection.localDescription);
 });
 
-// Create an answer
-document.getElementById('createAnswer').addEventListener('click', async () => {
-  const remoteDescription = JSON.parse(document.getElementById('remoteDescription').value);
-
-  localPeerConnection = new RTCPeerConnection();
-
-  // Get audio stream
-  localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  localPeerConnection.addStream(localStream);
-
-  localPeerConnection.onicecandidate = event => {
-    if (event.candidate) {
-      document.getElementById('localCandidate').value = JSON.stringify(event.candidate);
-    }
-  };
-
-  localPeerConnection.onaddstream = event => {
-    document.getElementById('remoteAudio').srcObject = event.stream;
-  };
-
-  await localPeerConnection.setRemoteDescription(new RTCSessionDescription(remoteDescription));
-
-  const answer = await localPeerConnection.createAnswer();
-  await localPeerConnection.setLocalDescription(answer);
-
-  document.getElementById('localDescription').value = JSON.stringify(localPeerConnection.localDescription);
-});
-
-// Set remote description (offer or answer)
+// Set the remote description
 document.getElementById('setRemoteDescription').addEventListener('click', async () => {
-  const remoteDescription = JSON.parse(document.getElementById('remoteDescription').value);
-  await localPeerConnection.setRemoteDescription(new RTCSessionDescription(remoteDescription));
+    const remoteDescription = JSON.parse(document.getElementById('remoteDescription').value);
+    await localPeerConnection.setRemoteDescription(new RTCSessionDescription(remoteDescription));
+});
+
+// Create an answer if an offer was set
+document.getElementById('createAnswer').addEventListener('click', async () => {
+    const localStream = await getAudioStream();
+    localStream.getTracks().forEach(track => localPeerConnection.addTrack(track, localStream));
+
+    const answer = await localPeerConnection.createAnswer();
+    await localPeerConnection.setLocalDescription(answer);
+
+    document.getElementById('localOffer').value = JSON.stringify(localPeerConnection.localDescription);
 });
 
 // Add remote ICE candidate
 document.getElementById('addRemoteCandidate').addEventListener('click', async () => {
-  const candidate = JSON.parse(document.getElementById('remoteCandidate').value);
-  await localPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-});
-
-// Start call (for offer creation)
-document.getElementById('startCall').addEventListener('click', () => {
-  alert('Call started');
+    const candidate = JSON.parse(document.getElementById('remoteCandidate').value);
+    await localPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
 });
 
 // End call
 document.getElementById('endCall').addEventListener('click', () => {
-  localPeerConnection.close();
-  alert('Call ended.');
+    if (localPeerConnection) {
+        localPeerConnection.close();
+        localPeerConnection = null;
+        alert('Call ended.');
+    }
 });
