@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Communication</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Voice Communication Setup</h1>
+    <p>Follow the steps below to establish a voice call with another user:</p>
+    
+    <h2>Step 1: Create and Share Offer</h2>
+    <p>Click the "Create Offer" button to generate an offer. Copy the offer details and share it with your partner.</p>
+    <textarea id="localDescription" placeholder="Your offer will appear here" readonly></textarea>
+    <button id="createOffer">Create Offer</button>
+    
+    <h2>Step 2: Enter Partner's Offer/Answer</h2>
+    <p>If you received an offer from your partner, paste it below and click "Set Remote Description" to respond. Alternatively, if you already created the offer, paste the answer you received from your partner here.</p>
+    <textarea id="remoteDescription" placeholder="Paste partner's offer or answer here"></textarea>
+    <button id="setRemoteDescription">Set Remote Description</button>
+    <button id="createAnswer">Create Answer (If offer received)</button>
+    
+    <h2>Step 3: Exchange ICE Candidates</h2>
+    <p>Share your ICE candidate with your partner and paste theirs below to finalize the connection.</p>
+    <textarea id="localCandidate" placeholder="Your ICE candidate will appear here" readonly></textarea>
+    <textarea id="remoteCandidate" placeholder="Paste partner's ICE candidate here"></textarea>
+    <button id="addRemoteCandidate">Add Remote ICE Candidate</button>
+    
+    <h2>Step 4: Start or End Call</h2>
+    <p>Once the above steps are complete, you can start the call. Click "End Call" when you are done.</p>
+    <button id="startCall">Start Call</button>
+    <button id="endCall">End Call</button>
+    
+    <audio id="remoteAudio" autoplay></audio>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
