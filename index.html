@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <title>Messenger with Voice Call</title>
     <style>
         
@@ -13,27 +14,28 @@
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4;
+    background-color:#F4E1FC;
+    color:balck;
     margin: 0;
 }
 
 .container {
 margin:0px;
-    background-color:#fabbcc;
-    color:#fff;
+    background-color:#e7f2f8;
+    color:black;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     max-width: 600px;
-    width: 100%;
+    width: 80%;
     
 }
 
 h1, h2 {
-    color: #007bff;
+    color: #2C007A;
 }
 
 textarea, input {
@@ -41,6 +43,9 @@ textarea, input {
     padding: 10px;
     margin-top: 10px;
 }
+input{
+	text-align:center;
+	}
 
 .chat-box {
     border: 1px solid #ddd;
@@ -84,10 +89,10 @@ audio {
     position:relative ;
 }
 .btn #callButton{
-    background-color:green;
+    background-color:#36A546;
 }
 .btn #endCall{
-    background-color:red;
+    background-color:#FF4300;
 }
     </style>
   </head>
@@ -96,14 +101,14 @@ audio {
         <h1>Kartoz Calling </h1>
 
         <h2>Your ID</h2>
-        <textarea id="myId" readonly></textarea>
+        <input id="myId" readonly></input>
         <p>Share with ur partner </p>
 
         <h2>Chat with Partner</h2>
-        <textarea id="partnerId" placeholder="Enter partner's ID"></textarea>
+        <input id="partnerId" placeholder="Enter partner's ID"></input>
         <div id="chatBox" class="chat-box"></div>
         <input type="text" id="messageInput" placeholder="Type a message" />
-        <button id="sendMessage">Send Message </button>
+        <button id="sendMessage">Send Message <i class="fa-solid fa-paper-plane"></i> </button>
 <div class="btn">
         <h2>Voice Call</h2>
         <button id="callButton">Call</button>
@@ -214,10 +219,13 @@ async function getAudioStream() {
 
 // Function to generate a phone number-like ID
 function generatePhoneNumber() {
+	 
     const part1 = Math.floor(100 + Math.random() * 900).toString();
     const part2 = Math.floor(100 + Math.random() * 900).toString();
     const part3 = Math.floor(1000 + Math.random() * 9000).toString();
-    return `${part1}-${part2}-${part3}`;
+   return `${part1}-${part2}-${part3}`;
+  
+  
 }
 
         
