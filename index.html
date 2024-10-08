@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Voice Communication</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+h1, h2 {
+    color: #007bff;
+}
+
+textarea, input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+audio {
+    display: block;
+    margin-top: 20px;
+    width: 100%;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Peer-to-Peer Voice Call</h1>
+        <p>Use the steps below to establish a voice call with another user using unique IDs.</p>
+
+        <h2>Step 1: Get Your ID</h2>
+        <p>Your unique ID is generated below. Share this with your partner to start a call.</p>
+        <textarea id="myId" readonly></textarea>
+
+        <h2>Step 2: Call Your Partner</h2>
+        <p>Enter your partner's ID below and click "Call".</p>
+        <input type="text" id="partnerId" placeholder="Enter partner's ID" />
+        <button id="callButton">Call</button>
+
+        <button id="endCall">End Call</button>
+        <audio id="remoteAudio" autoplay></audio>
+    </div>
+
+    <!-- PeerJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
+    <script>
+        
+        const peer = new Peer(); // Create a new PeerJS object
+let localStream;
+
+// Display the user's ID once PeerJS connects
+peer.on('open', id => {
+    document.getElementById('myId').value = id;
+});
+
+// Get the user's audio stream
+async function getAudioStream() {
+    try {
+        return await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+        alert('Error accessing audio device: ' + error);
+    }
+}
+
+// Handle incoming calls
+peer.on('call', async call => {
+    localStream = await getAudioStream();
+    call.answer(localStream); // Answer the call with the local audio stream
+
+    call.on('stream', remoteStream => {
+        document.getElementById('remoteAudio').srcObject = remoteStream;
+    });
+
+    call.on('close', () => {
+        alert('Call ended');
+    });
+});
+
+// Call a partner using their ID
+document.getElementById('callButton').addEventListener('click', async () => {
+    const partnerId = document.getElementById('partnerId').value;
+    if (!partnerId) {
+        alert('Please enter a partner ID');
+        return;
+    }
+
+    localStream = await getAudioStream();
+    const call = peer.call(partnerId, localStream);
+
+    call.on('stream', remoteStream => {
+        document.getElementById('remoteAudio').srcObject = remoteStream;
+    });
+
+    call.on('close', () => {
+        alert('Call ended');
+    });
+});
+
+// End call button (optional implementation)
+document.getElementById('endCall').addEventListener('click', () => {
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+    alert('Call ended.');
+});
+
+        
+    </script>
+</body>
+</html>
