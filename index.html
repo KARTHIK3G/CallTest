@@ -17,35 +17,53 @@ body {
     justify-content: space-around;
     align-items: center;
     height: 100vh;
-    background-color:#F4E1FC;
+    background-color:#C4B8FF;
+
+    background-attachment:fixed;
+    background-repeat:no-repeat;
+    background-size:cover;
     color:balck;
     margin: 0;
 }
 
 .container {
 margin:0px;
-    background-color:#e7f2f8;
+    background-color:black;
     color:black;
     padding: 20px;
-    border-radius: 8px;
+    border:4px solid rgba(0,0,0,0.2);
+    border-radius: 18px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     max-width: 600px;
     width: 80%;
     
 }
+.container .morph
+{
+	background-color:rgba(0,0,0,0.05);  
+	padding:16px;
+	margin:2px;
+	border-radius:16px;
+	}
 
 h1, h2 {
-    color: #2C007A;
+    color: #F79EFF;
+    text-align:center;
+    padding:10px 0px;
 }
 
 textarea, input {
-    min-width: 100%;
-    padding: 10px;
+    width: 100%;
+    padding: 8px 10px;
     margin-top: 10px;
+    border:none;
+    border-radius:12px;
+    background-color:#F5FEFF;
 }
 input{
 	text-align:center;
 	}
+
 
 .chat-box {
     border: 1px solid #ddd;
@@ -54,10 +72,11 @@ input{
     padding: 10px;
     margin-top: 10px;
     background-color: #f9f9f9;
+    border-radius:3%;
 }
 
 button {
-    width: 50%;
+    width: 40%;
     padding: 10px;
     
     margin-top: 10px;
@@ -68,6 +87,14 @@ button {
     cursor: pointer;
     border-radius: 4px;
 }
+#sendMessage{
+	background:linear-gradient(45deg,#D28FFF,#CD61FF);
+	color:#fff;
+	border-radius:5px;
+	max-width:40%;
+	display: inline;
+	
+	}
 
 button:hover {
     background-color: #0056b3;
@@ -85,35 +112,53 @@ audio {
     flex-direction:column;
     padding:2px;
 }
+#messageInput{
+	display:inline;
+	width:60%;
+		}
+.inp_btn{
+	display: flex;
+	gap:2px;
+	justify-content:space-between;
+	align-items:center;
+	min-width:100%;
+	padding:5px 0px;
+	margin:5px 0px;
+	background-color:#EFFFF;
+	
+}
 .btn h2{
     position:relative ;
 }
 .btn #callButton{
-    background-color:#36A546;
+    background-color:#C738BD;
 }
 .btn #endCall{
-    background-color:#FF4300;
+    background-color:#624E88;
 }
     </style>
   </head>
 <body>
     <div class="container">
-        <h1>Kartoz Calling </h1>
+        <h1>Deepuu Calling </h1>
+        <div class="morph">
 
         <h2>Your ID</h2>
         <input id="myId" readonly></input>
-        <p>Share with ur partner </p>
 
         <h2>Chat with Partner</h2>
         <input id="partnerId" placeholder="Enter partner's ID"></input>
         <div id="chatBox" class="chat-box"></div>
-        <input type="text" id="messageInput" placeholder="Type a message" />
-        <button id="sendMessage">Send Message <i class="fa-solid fa-paper-plane"></i> </button>
+      <div class="inp_btn">
+      	  <input type="text" id="messageInput" placeholder="Type a message" />
+        <button id="sendMessage" >Send<i class="fa-solid fa-paper-plane"></i> </button>
+      	</div>
 <div class="btn">
         <h2>Voice Call</h2>
         <button id="callButton">Call</button>
         <button id="endCall">End Call</button>
         <audio id="remoteAudio" autoplay></audio>
+    </div>
     </div>
     </div>
 
@@ -175,7 +220,7 @@ document.getElementById('callButton').addEventListener('click', async () => {
     });
 
     call.on('close', () => {
-        alert('Call ended');
+        alert('Call endded');
     });
 });
 
@@ -190,9 +235,11 @@ document.getElementById('partnerId').addEventListener('change', () => {
 
 // End call
 document.getElementById('endCall').addEventListener('click', () => {
+	peer.destroy();
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
     }
+    navigator.mediaDevices.getUserMedia({ audio: false });
     alert('Call ended.');
 });
 
@@ -226,9 +273,7 @@ function generatePhoneNumber() {
    return `${part1}-${part2}-${part3}`;
   
   
-}
-
-        
+}     
     </script>
 </body>
 </html>
